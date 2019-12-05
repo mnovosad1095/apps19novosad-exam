@@ -32,8 +32,7 @@ public class JsonObject extends Json {
 
     public JsonObject projection(String... names) {
         JsonObject res = new JsonObject();
-        Arrays.asList(names).stream().filter(x -> this.find(x) != null);
-        Arrays.asList(names).stream().forEach(x -> res.add(new JsonPair(x, this.find(x))));
+        Arrays.asList(names).stream().forEach(x -> res.add(new JsonPair(x, projectionEl(x))));
         return res;
     }
 
@@ -46,9 +45,20 @@ public class JsonObject extends Json {
         while (iterator.hasNext()) {
             Map.Entry<String, Json> mentry = iterator.next();
             System.out.println(mentry);
-            jsonStr += mentry.getKey() + ": " + mentry.getValue().toJson() + ", ";
+            jsonStr += "'" + mentry.getKey() + "'" + ": " + mentry.getValue().toJson() ;
+            if (iterator.hasNext()) { jsonStr += ", "; }
         }
 
         return jsonStr;
     }
+
+    private Json projectionEl(String name) {
+        Json el = find(name);
+        if (el == null) {
+            el = new JsonNull();
+        }
+
+        return el;
+    }
+
 }
